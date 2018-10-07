@@ -1,0 +1,53 @@
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+<script>
+    angular.module("myApp", []).controller("myCtrl", function ($scope, $http) {
+        // sService is the wordpress parameter
+        $scope.model = { main_service: oAtts.service,
+        "services":[]};
+
+        $scope.bookAppointment = function(){
+            //alert(JSON.stringify($scope.model));
+            $http.post("/slim/api/appointmentservice", $scope.model).then(
+                function(data){
+                    alert(JSON.stringify(data.data));
+                },
+                function(err){
+                    alert(JSON.stringify(err));
+                }
+            )
+          
+        }
+        $scope.addService = function(){
+            $scope.model.services.push({"service_name":$scope.service_to_add});
+            $scope.service_to_add = "";
+        }
+    });
+</script>
+<style>
+    .basic_info input {
+        float: right;
+        clear: right;
+        width: 40%;
+    }
+
+    .pull-right{
+        float:right;
+        clear: both;
+    }
+</style>
+<form ng-app="myApp" ng-controller="myCtrl" ng-submit="bookAppointment()">
+    <div class="basic_info">
+        Name: <input name="name" ng-model="model.name" placeholder="enter your name"/><br /> 
+        Date: <input name="appointment_date" ng-model="model.appointment_date" ng-model-options="{timezone: 'utc'}" type="date" min="$mindate" /><br /> 
+        Phone: <input name="phone" ng-model="model.phone" type="tel" placeholder="enter your phone number" /><br />
+    </div>
+    <h2>Services</h2>
+    <div class="pull-right">
+        <input placeholder="add service" ng-model="service_to_add" />
+        <button type="button" ng-click="addService()">+</button>
+    </div>
+    <div class="row" ng-repeat="service in model.services">
+        {{service.service_name}}
+    </div>
+    <input type="submit" />
+</form>
